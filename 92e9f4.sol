@@ -50,5 +50,9 @@ contract Fundski_2018 {
         require(now >= deadline + 365 days, "Pledges cannot be collected until 365 days after the deadline.");
         destination.transfer(address(this).balance);
     }
+    
+    function getTotalPledges() public view returns (uint256) {
+        return totalPledges;
+    }
 
 }
