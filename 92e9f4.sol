@@ -1,7 +1,7 @@
 pragma solidity ^0.4.23;
 
 //smart contract for incentivized fundraiser
-//sponor creates a contract and provides seed funding, 
+//sponsor creates a contract and provides seed funding, 
 //  specifying beneficiary, bonusPercent, and goal
 //each supporter can create a pledge
 //each pledge is increased by the bonusPercent amount, while seed funding lasts
@@ -68,10 +68,20 @@ contract Fundski_2018 {
         require(now >= deadline + 365 days, "Pledges cannot be collected until 365 days after the deadline.");
         beneficiary.transfer(address(this).balance);
     }
+
+    //get goal (in wei)
+    function getGoal() public view returns (uint256) {
+        return goal;
+    }
     
     //get total amount of all pledges (exclusive of bonus, in wei)
     function getTotalPledges() public view returns (uint256) {
         return totalPledges;
+    }
+
+    //get percent progress toward goal
+    function getPercentProgress() public view returns (uint256) {
+        return (100 * totalPledges) / goal;
     }
     
     //get days left before deadline
