@@ -72,5 +72,11 @@ contract Fundski_2018 {
     function getTotalPledges() public view returns (uint256) {
         return totalPledges;
     }
+    
+    //get days left before deadline
+    function getDaysLeft() public view returns(uint256) {
+        uint256 daysLeft = (deadline - now) / (60 * 60 * 24);
+        return daysLeft;
+    }
 
 }
