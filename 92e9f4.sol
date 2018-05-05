@@ -23,6 +23,7 @@ contract Fundski_2018 {
         uint256 _goal, 
         uint8 _bonusPercent, 
         address _beneficiary) public payable {
+            require((_goal * _bonusPercent) / 100 <= msg.value, "Not enough bonus for goal!");
             sponsor = msg.sender;
             deadline = now + (daysToDeadline * 1 days) + (minutesToDeadline * 1 minutes);
             goal = _goal;
@@ -53,7 +54,8 @@ contract Fundski_2018 {
 
     //once the deadline has passed, if the total pledges meet the goal, send all pledges and bonus to fundraising beneficiary
     function deliverFunds() public {
-        //require(now >= deadline, "The campaign is not over yet!");
+        require(now >= deadline, "The campaign is not over yet!");
+        require(address(this).balance > 0, "No funds remain to deliver.");
         require(totalPledges >= goal, "Alas, the funding goal was not met. Use getRefund() to recover pledges and bonus.");
         beneficiary.transfer(address(this).balance);
     }
