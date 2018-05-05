@@ -17,13 +17,18 @@ contract Fundski_2018 {
     uint8 bonusPercent;
     mapping(address => uint256) public balanceOf;
     uint256 totalPledges;
-    constructor(uint256 daysToDeadline, uint256 minutesToDeadline, uint256 _goal, uint8 _bonusPercent, address _beneficiary) public payable {
-        sponsor = msg.sender;
-        deadline = now + (daysToDeadline * 1 days) + (minutesToDeadline * 1 minutes);
-        goal = _goal;
-        bonusPercent = _bonusPercent;
-        balanceOf[msg.sender] = msg.value;
-        beneficiary = _beneficiary; //expect 0x5fCc0Ba549683f3211F933997B68c09B6f92E9F4
+    constructor(
+        uint256 daysToDeadline, 
+        uint256 minutesToDeadline, 
+        uint256 _goal, 
+        uint8 _bonusPercent, 
+        address _beneficiary) public payable {
+            sponsor = msg.sender;
+            deadline = now + (daysToDeadline * 1 days) + (minutesToDeadline * 1 minutes);
+            goal = _goal;
+            bonusPercent = _bonusPercent;
+            balanceOf[msg.sender] = msg.value;
+            beneficiary = _beneficiary; //expect 0x5fCc0Ba549683f3211F933997B68c09B6f92E9F4
     }
 
     //submit a pledge (in the amount of the transaction value, in wei)
@@ -47,8 +52,8 @@ contract Fundski_2018 {
     }
 
     //once the deadline has passed, if the total pledges meet the goal, send all pledges and bonus to fundraising beneficiary
-    function consummate() public {
-        require(now >= deadline, "The campaign is not over yet!");
+    function deliverFunds() public {
+        //require(now >= deadline, "The campaign is not over yet!");
         require(totalPledges >= goal, "Alas, the funding goal was not met. Use getRefund() to recover pledges and bonus.");
         beneficiary.transfer(address(this).balance);
     }
@@ -56,7 +61,7 @@ contract Fundski_2018 {
     //if the deadline has passed and the goal was not met, allow the supporter to retrieve the pledge plus bonus
     function getRefund() public {
         require(now >= deadline, "The campaign is not over yet!");
-        require(totalPledges < goal, "Good news, the  goal was met. Use consummate() to transfer pledges to the beneficiary.");
+        require(totalPledges < goal, "Good news, the  goal was met. Use deliverFunds() to transfer pledges to the beneficiary.");
 
         uint256 amount = balanceOf[msg.sender];
         balanceOf[msg.sender] = 0;
