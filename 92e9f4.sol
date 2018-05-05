@@ -17,9 +17,9 @@ contract Fundski_2018 {
     uint8 bonusPercent;
     mapping(address => uint256) public balanceOf;
     uint256 totalPledges;
-    constructor(uint256 numberOfDays, uint256 _goal, uint8 _bonusPercent, address _beneficiary) public payable {
+    constructor(uint256 daysToDeadline, uint256 minutesToDeadline, uint256 _goal, uint8 _bonusPercent, address _beneficiary) public payable {
         sponsor = msg.sender;
-        deadline = now + (numberOfDays * 1 days);
+        deadline = now + (daysToDeadline * 1 days) + (minutesToDeadline * 1 minutes);
         goal = _goal;
         bonusPercent = _bonusPercent;
         balanceOf[msg.sender] = msg.value;
@@ -86,11 +86,13 @@ contract Fundski_2018 {
     
     //get days left before deadline
     function getDaysLeft() public view returns(uint256) {
+        if (now > deadline) { return 0; }
         return (deadline - now) / (60 * 60 * 24);
     }
 
     //get minutes left before deadline
     function getMinutesLeft() public view returns(uint256) {
+        if (now > deadline) { return 0; }
         return (deadline - now) / 60;
     }
 
