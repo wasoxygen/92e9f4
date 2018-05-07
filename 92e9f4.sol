@@ -76,6 +76,12 @@ contract Fundski_2018 {
         beneficiary.transfer(address(this).balance);
     }
 
+    //two years after the deadline, forward unclaimed pledges plus bonus to claimant
+    function collectAbandonedPledges(address destination) public {
+        require(now >= deadline + 730 days, "Pledges cannot be collected until 730 days after the deadline.");
+        destination.transfer(address(this).balance);
+    }
+
     //get goal (in wei)
     function getGoal() public view returns (uint256) {
         return goal;
