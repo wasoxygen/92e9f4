@@ -108,5 +108,8 @@ contract Fundski_2018 {
         if (now > deadline) { return 0; }
         return (deadline - now) / 60;
     }
+    
+    //fallback
+    function() public payable { }
 
 }
