@@ -63,13 +63,23 @@ contract Fundski_2018 {
     //if the deadline has passed and the goal was not met, allow the supporter to retrieve the pledge plus bonus
     function getRefund() public {
         require(now >= deadline, "The campaign is not over yet!");
-        require(totalPledges < goal, "Good news, the  goal was met. Use deliverFunds() to transfer pledges to the beneficiary.");
+        require(totalPledges < goal, "Good news, the  goal was met. Call deliverFunds to transfer pledges to the beneficiary.");
 
         uint256 amount = balanceOf[msg.sender];
         balanceOf[msg.sender] = 0;
         msg.sender.transfer(amount);
     }
-    
+
+    //if the deadline has passed and the goal was not met, allow the sponsor to recover unused bonus
+    function recoverUnusedBonus() public {
+        require(now >= deadline, "The campaign is not over yet!");
+        require(totalPledges < goal, "Good news, the  goal was met. Call deliverFunds to transfer pledges to the beneficiary.");
+        require(msg.sender == sponsor , "Only the sponsor can recover unused bonus.");
+        uint256 amount = balanceOf[sponsor];
+        balanceOf[sponsor] = 0;
+        sponsor.transfer(amount);
+    }
+
     //one year after the deadline, forward unclaimed pledges plus bonus to fundraising beneficiary
     function collectAbandonedPledges() public {
         require(now >= deadline + 365 days, "Pledges cannot be collected until 365 days after the deadline.");
