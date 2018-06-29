@@ -118,8 +118,14 @@ contract Fundski_2018 {
         if (now > deadline) { return 0; }
         return (deadline - now) / 60;
     }
-    
+
+    //sponsor can undo in case of fouled launch (if no pledges received)
+    function cancel() public {
+        require(totalPledges == 0, "Unable to cancel; pledges already received.");
+        require(msg.sender == sponsor , "Only the sponsor can cancel.");
+        sponsor.transfer(address(this).balance);
+    }
+
     //fallback
     function() public payable { }
-
 }
