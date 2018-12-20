@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.5.2;
 
 //smart contract for incentivized fundraiser
 //sponsor creates a contract and provides seed funding, 
@@ -10,8 +10,8 @@ pragma solidity ^0.4.23;
 
 //the fundraiser contract
 contract Fundski_2018 {
-    address sponsor;
-    address beneficiary;
+    address payable sponsor;
+    address payable beneficiary;
     uint256 deadline;
     uint256 goal;
     uint8 bonusPercent;
@@ -22,7 +22,7 @@ contract Fundski_2018 {
         uint256 minutesToDeadline, 
         uint256 _goal, 
         uint8 _bonusPercent, 
-        address _beneficiary) public payable {
+        address payable _beneficiary) public payable {
             require((_goal * _bonusPercent) / 100 <= msg.value, "Not enough bonus for goal!");
             sponsor = msg.sender;
             deadline = now + (daysToDeadline * 1 days) + (minutesToDeadline * 1 minutes);
@@ -87,7 +87,7 @@ contract Fundski_2018 {
     }
 
     //two years after the deadline, forward unclaimed pledges plus bonus to claimant
-    function collectAbandonedPledges(address destination) public {
+    function collectAbandonedPledges(address payable destination) public {
         require(now >= deadline + 730 days, "Pledges cannot be collected until 730 days after the deadline.");
         destination.transfer(address(this).balance);
     }
@@ -118,14 +118,8 @@ contract Fundski_2018 {
         if (now > deadline) { return 0; }
         return (deadline - now) / 60;
     }
-
-    //sponsor can undo in case of fouled launch (if no pledges received)
-    function cancel() public {
-        require(totalPledges == 0, "Unable to cancel; pledges already received.");
-        require(msg.sender == sponsor , "Only the sponsor can cancel.");
-        sponsor.transfer(address(this).balance);
-    }
-
+    
     //fallback
-    function() public payable { }
+    function() external payable { }
+
 }
